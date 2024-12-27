@@ -23,7 +23,7 @@ export default {
   },
   data() {
     return {
-      page: 'Register',
+      page: 'Products',
     };
   },
   methods: {
