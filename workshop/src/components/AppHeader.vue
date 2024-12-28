@@ -1,6 +1,22 @@
 <script>
 export default {
-  emits: ['select'],
+  data() {
+    return {
+      links: [
+        { name: 'home', label: 'Home', },
+        { name: 'products', label: 'Products', },
+        { name: 'about', label: 'About', },
+        { name: 'contacts', label: 'Contacts', },
+        { name: 'register', label: 'Register', },
+
+      ],
+    };
+  },
+  methods: {
+    onCartClick() {
+      this.$router.push({ name: 'cart' });
+    },
+  },
 };
 </script>
 
@@ -9,19 +25,22 @@ export default {
     <nav>
       <ul>
         <li>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4Q0hUaUi7lLLC5UOslM9ul_B8NyXTKNn9BcBGtCXV&s"
-            alt="logo"
-          >
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4Q0hUaUi7lLLC5UOslM9ul_B8NyXTKNn9BcBGtCXV&s"
+            alt="logo">
         </li>
       </ul>
       <ul>
-        <li><a href="#" @click.prevent="$emit('select', 'Home')">Home</a></li>
-        <li><a href="#" @click.prevent="$emit('select', 'Products')">Products</a></li>
-        <li><a href="#" @click.prevent="$emit('select', 'About')">About</a></li>
-        <li><a href="#" @click.prevent="$emit('select', 'Contacts')">Contacts</a></li>
-        <li><a href="#" @click.prevent="$emit('select', 'Register')">Register</a></li>
-        <li><a href="#" role="button" @click.prevent="$emit('select', 'Cart')">Cart</a></li>
+        <li v-for="link in links" :key="link.path">
+          <router-link :to="{ name: link.name }">
+            {{ link.label }}
+          </router-link>
+        </li>
+
+        <li>
+          <button type="button" class="prymay" @click="onCartClick">
+            Cart
+          </button>
+        </li>
       </ul>
     </nav>
   </header>

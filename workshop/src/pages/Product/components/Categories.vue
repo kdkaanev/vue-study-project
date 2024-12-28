@@ -1,5 +1,5 @@
 <script>
-import { categories } from '../../../constants/categories';
+import { getAllCategories } from '../../../services/categoriesServices';
 
 export default {
   props: {
@@ -12,18 +12,24 @@ export default {
   },
   emits: ['select'],
   data() {
-    return { categories };
+    return {
+      isLoading: true,
+      categories: [],
+    };
+  },
+  async created() {
+    this.categories = await getAllCategories();
+    this.isLoading = false;
   },
 };
 </script>
 
 <template>
-  <ul role="list" class="categories">
-    <li v-for="category in categories" :key="`category-btn-${category.value}`">
-      <button
-        :class="[category.value === active ? 'pimary' : 'secondary outline']"
-        @click="$emit('select', category.value)"
-      >
+  <progress v-if="isLoading" />
+  <ul v-else-if="categories.length > 0" role="list" class="categories">
+    <li v-for="category in categories" :key="`category-btn-${category.slug}`">
+      <button :class="[category.slug === active ? 'pimary' : 'secondary outline']"
+        @click="$emit('select', category.slug)">
         {{ category.name }}
       </button>
     </li>
@@ -33,7 +39,8 @@ export default {
 <style scoped>
 .categories {
   display: flex;
-  justify-content: center;
   gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 2rem;
 }
 </style>
