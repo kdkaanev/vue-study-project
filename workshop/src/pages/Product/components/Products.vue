@@ -1,6 +1,5 @@
 <script>
-import { products } from '../../../constants/products';
-import { getAllProducts } from '../../../services/productServises';
+import { getAllProducts, getProductsByCategory } from '../../../services/productServises';
 import Categories from './Categories.vue';
 import Productcard from './Productcard.vue';
 
@@ -16,18 +15,25 @@ export default {
       products: [],
     };
   },
-  computed: {
-    visibleProducts() {
-      return this.activeCategory === '' ? this.products : products.filter(prod => prod.category === this.activeCategory);
-    },
-  },
+
   async created() {
-    this.products = await getAllProducts();
-    this.isLoading = false;
+    await this.loadProducts();
   },
   methods: {
-    onSelect(value) {
-      this.activeCategory = this.activeCategory === value ? '' : value;
+    async onSelect(value) {
+      const category = this.activeCategory === value ? '' : value;
+      this.activeCategory = category;
+      await this.loadProducts(category);
+    },
+    async loadProducts(category = '') {
+      this.isLoading = true;
+      if (category) {
+        this.products = await getProductsByCategory(category);
+      }
+      else {
+        this.products = await getAllProducts();
+      }
+      this.isLoading = false;
     },
   },
 };
@@ -38,8 +44,8 @@ export default {
     <Categories :active="activeCategory" @select="onSelect" />
   </div>
   <progress v-if="isLoading" />
-  <div v-else-if="visibleProducts.lenght > 0" class="products">
-    <Productcard v-for="prod in visibleProducts" :key="prod.title + prod.id" :product="prod" />
+  <div v-else-if="products.length > 0" class="products">
+    <Productcard v-for="prod in products" :key="prod.title + prod.id" :product="prod" />
   </div>
 </template>
 
