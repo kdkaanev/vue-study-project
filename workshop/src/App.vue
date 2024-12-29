@@ -12,7 +12,7 @@ export default {
 </script>
 
 <template>
-  <AppHeader @select="onSelect" />
+  <AppHeader />
   <main>
     <router-view />
   </main>

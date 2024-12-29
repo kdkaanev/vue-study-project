@@ -3,11 +3,12 @@ export default {
   data() {
     return {
       links: [
-        { name: 'home', label: 'Home', },
-        { name: 'products', label: 'Products', },
-        { name: 'about', label: 'About', },
-        { name: 'contacts', label: 'Contacts', },
-        { name: 'register', label: 'Register', },
+        { name: 'home', label: 'Home' },
+        { name: 'products', label: 'Products' },
+        { name: 'about', label: 'About' },
+        { name: 'contacts', label: 'Contacts' },
+        { name: 'register', label: 'Register' },
+        { name: 'favorites', label: 'Favorites' },
 
       ],
     };
