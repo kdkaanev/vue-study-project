@@ -7,6 +7,10 @@ export const useCartStore = defineStore('cartStore', {
     };
   },
   actions: {
+    removeFromCart(productId) {
+      this.products.delete(productId);
+    },
+
     addToCart(product) {
       if (this.products.has(product.id)) {
         const prod = this.products.get(product.id);
@@ -21,27 +25,17 @@ export const useCartStore = defineStore('cartStore', {
         });
       }
     },
-    changeQuantity(product, type) {
+    changeQuantity(product, newQuantity) {
       const prod = this.products.get(product.id);
       if (!prod)
         return;
-      if (type === 'increment') {
-        prod.quantity += 1;
+      if (newQuantity > 0) {
+        prod.quantity = newQuantity;
       }
       else {
-        if (prod.quantity > 1) {
-          prod.quantity -= 1;
-        }
-        else {
-          this.removeFromCart(product.id);
-        }
+        this.removeFromCart(product.id);
       }
     },
-
-    removeFromCart(productId) {
-      this.products.delete(productId);
-    },
-
   },
 
 });

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import About from '../pages/About.vue';
-import Cart from '../pages/Cart.vue';
+import Cart from '../pages/Cart/Cart.vue';
 import Contacts from '../pages/Contacts.vue';
 import Favorities from '../pages/Favorities.vue';
 import Home from '../pages/Home.vue';
