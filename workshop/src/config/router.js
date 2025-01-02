@@ -4,14 +4,14 @@ import Cart from '../pages/Cart.vue';
 import Contacts from '../pages/Contacts.vue';
 import Favorities from '../pages/Favorities.vue';
 import Home from '../pages/Home.vue';
+import Login from '../pages/Login.vue';
 import NotFound from '../pages/NotFound.vue';
 import Products from '../pages/Product/components/Products.vue';
-import SingleProduct from '../pages/Product/components/SingleProduct.vue';
 import Register from '../pages/Register/Register.vue';
 import User from '../pages/User/User.vue';
 import UserDetail from '../pages/User/UserDetail.vue';
 import UserEdit from '../pages/User/UserEdit.vue';
-import UserHome from '../pages/User/UserHome.vue';
+import { useUserStore } from '../stores/useUserStore';
 
 const routes = [
   { path: '/', name: 'home', component: Home },
@@ -20,7 +20,38 @@ const routes = [
   { path: '/contacts', name: 'contacts', component: Contacts },
   { path: '/register', name: 'register', component: Register },
   { path: '/cart', name: 'cart', component: Cart },
-  { path: '/favorites', name: 'favorites', component: Favorities },
+  {
+    path: '/favorites',
+    name: 'favorites',
+    component: Favorities,
+    beforeEnter: async () => {
+      const store = useUserStore();
+      if (!store.user) {
+        const isLoged = await store.reAuthUser();
+        if (!isLoged) {
+          return { name: 'login' };
+        }
+      }
+      return true;
+    },
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+    beforeEnter: async () => {
+      const store = useUserStore();
+      if (store.user) {
+        return false;
+      }
+      else {
+        const isLoged = await store.reAuthUser();
+        if (isLoged) {
+          return false;
+        }
+      }
+    },
+  },
 
   {
     path: '/user',

@@ -1,5 +1,7 @@
 <script>
+import { useCartStore } from '../../../stores/useCartStore';
 import { useFavoritiesStore } from '../../../stores/useFavoritiesStore';
+import { useUserStore } from '../../../stores/useUserStore';
 
 export default {
   props: {
@@ -11,6 +13,8 @@ export default {
   setup() {
     return {
       favoritiesStore: useFavoritiesStore(),
+      userStore: useUserStore(),
+      cartStore: useCartStore(),
     };
   },
   computed: {
@@ -27,14 +31,16 @@ export default {
     <h2>{{ product.title }}</h2>
     <p>{{ product.description }}</p>
     <p><b>Price</b>: {{ product.price }}</p>
-    <footer>
-      <button type="button" class="secondary outline">
-        Add to cart 🛒
-      </button>
-      <button type="button" class="contrast" :class="[isFavorite ? '' : 'outline']"
-        @click="favoritiesStore.toggleFavorite(product.id)">
-        Favorite {{ isFavorite ? '💙' : '🤍' }}
-      </button>
-    </footer>
+
+    <button type="button" class="secondary outline" @click="cartStore.addToCart(product)">
+      Add to cart 🛒
+    </button>
+    <button
+      v-if="userStore.isUserLoged"
+      type="button" class="contrast" :class="[isFavorite ? '' : 'outline']"
+      @click="favoritiesStore.toggleFavorite(product.id)"
+    >
+      Favorite {{ isFavorite ? '💙' : '🤍' }}
+    </button>
   </article>
 </template>

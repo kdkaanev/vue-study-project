@@ -1,5 +1,14 @@
 <script>
+import { useCartStore } from '../stores/useCartStore';
+import { useUserStore } from '../stores/useUserStore';
+
 export default {
+  setup() {
+    return {
+      userStore: useUserStore(),
+      cartStore: useCartStore(),
+    };
+  },
   data() {
     return {
       links: [
@@ -9,9 +18,23 @@ export default {
         { name: 'contacts', label: 'Contacts' },
         { name: 'register', label: 'Register' },
         { name: 'favorites', label: 'Favorites' },
+        { name: 'login', label: 'Login' },
 
       ],
     };
+  },
+  computed: {
+    userName() {
+      return this.userStore.user?.username ?? '';
+    },
+    cartLength() {
+      return this.cartStore.products.size;
+    },
+
+  },
+
+  async created() {
+    await this.userStore.reAuthUser();
   },
   methods: {
     onCartClick() {
@@ -26,8 +49,10 @@ export default {
     <nav>
       <ul>
         <li>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4Q0hUaUi7lLLC5UOslM9ul_B8NyXTKNn9BcBGtCXV&s"
-            alt="logo">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4Q0hUaUi7lLLC5UOslM9ul_B8NyXTKNn9BcBGtCXV&s"
+            alt="logo"
+          >
         </li>
       </ul>
       <ul>
@@ -39,7 +64,10 @@ export default {
 
         <li>
           <button type="button" class="prymay" @click="onCartClick">
-            Cart
+            Cart <span v-if="cartLength">{{ cartLength }}</span>
+          </button>
+          <button class="outline" type="button">
+            {{ userName }}
           </button>
         </li>
       </ul>
