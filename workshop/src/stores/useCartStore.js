@@ -25,15 +25,15 @@ export const useCartStore = defineStore('cartStore', {
         });
       }
     },
-    changeQuantity(product, newQuantity) {
-      const prod = this.products.get(product.id);
+    changeQuantity(productId, newQuantity) {
+      const prod = this.products.get(productId);
       if (!prod)
         return;
       if (newQuantity > 0) {
         prod.quantity = newQuantity;
       }
       else {
-        this.removeFromCart(product.id);
+        this.removeFromCart(productId);
       }
     },
   },

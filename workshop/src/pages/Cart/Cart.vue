@@ -18,10 +18,25 @@ export default {
       isLoading: true,
     };
   },
+  computed: {
+    totalPrice() {
+      const total = this.products.reduce((acc, product) => {
+        const quantity = this.cartStore.products.get(product.id).quantity;
+        return acc + product.price * quantity;
+      }, 0);
+      return Math.round(total * 100) / 100;
+    },
+  },
   async created() {
     const response = await getProductsByIds(Array.from(this.cartStore.products.keys()));
     this.products = response;
     this.isLoading = false;
+  },
+  methods: {
+    onDelete(productId) {
+      this.products = this.products.filter(prod => prod.id !== productId);
+      this.cartStore.removeFromCart(productId);
+    },
   },
 };
 </script>
@@ -30,9 +45,9 @@ export default {
   <h1 style="text-align: center;">
     Cart
   </h1>
-  <div class="container">
+  <div class="pageContainer">
     <progress v-if="isLoading" />
-    <article >
+    <article>
       <table>
         <thead>
           <tr>
@@ -43,7 +58,7 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <CartTableRow v-for="product in products" :key="product.id" :product="product"/>
+          <CartTableRow v-for="product in products" :key="product.id" :product="product" @delete="onDelete(product.id)" />
         </tbody>
         <tfoot>
           <tr>
@@ -51,7 +66,7 @@ export default {
               Total:
             </td>
             <td class="price">
-              $89
+              {{ totalPrice }}$
             </td>
           </tr>
         </tfoot>
@@ -59,3 +74,17 @@ export default {
     </article>
   </div>
 </template>
+
+<style scoped>
+.pageContainer {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+article {
+  width: 600pxs;
+  
+}
+</style>

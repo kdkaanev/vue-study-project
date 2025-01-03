@@ -8,6 +8,7 @@ export default {
       required: true,
     },
   },
+  emits: ['delete'],
   setup() {
     return {
       cartStore: useCartStore(),
@@ -18,7 +19,8 @@ export default {
       return this.cartStore.products.get(this.product.id).quantity;
     },
     totalPrice() {
-      return (this.product.price * 100) / 100 * this.quantity;
+      const total = this.product.price * this.quantity;
+      return Math.round(total * 100) / 100;
     },
   },
   methods: {
@@ -36,20 +38,20 @@ export default {
         <img
           style="object-fit: cover; width: 100%; height: 100%;"
           :src="product.images[0]"
-          :alt="product.images.title"
+          :alt="product.price.title"
         >
       </div>
     </td>
     <td>
       <p style="font-size: 1.25rem;">
-        {{ product.images.title }}
+        {{ product.title }}
       </p>
       <p style="font-size: 0.75rem;">
         Product price:{{ product.price }}$
       </p>
     </td>
     <td>
-      <input type="number" min="0" value="quantity" style="width: 5rem;" @change="onQuantityChange">
+      <input type="number" min="0" :value="quantity" style="width: 5rem;" @change="onQuantityChange">
     </td>
     <td class="price">
       {{ totalPrice }}$
@@ -58,7 +60,7 @@ export default {
       <button
         type="button"
         class="secondary outline"
-        @click="cartStore.removeFromCart(product.id)"
+        @click="$emit('delete')"
       >
         🗑️
       </button>
