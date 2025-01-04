@@ -1,49 +1,33 @@
-<script>
+<script setup>
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import { computed, onMounted, ref } from 'vue';
 import FormFieldSet from '../pages/Register/components/FormFieldSet.vue';
 import { useUserStore } from '../stores/useUserStore';
 
-export default {
-  components: {
-    FormFieldSet,
-  },
-  setup() {
-    return {
-      v$: useVuelidate(),
-      userStore: useUserStore(),
-    };
-  },
-  data() {
-    return {
-      form: {
-        username: 'emilys',
-        password: 'emilyspass',
-      },
-    };
-  },
-  validations() {
-    return {
-      form: {
-        username: { required },
-        password: { required },
-      },
-    };
-  },
-  mounted() {
-    this.userStore.reAuthUser();
-  },
-  methods: {
-    async onLogin() {
-      const isvalid = await this.v$.$validate();
-      if (!isvalid)
-        return;
+const userStore = useUserStore();
 
-      await this.userStore.loginUser(this.form);
-    },
+const form = ref({
+  username: 'emilys',
+  password: 'emilyspass',
+});
+const rules = computed(() => ({
+  form: {
+    username: { required },
+    password: { required },
   },
+}));
 
-};
+const v$ = useVuelidate(rules, { form });
+onMounted(() => userStore.reAuthUser());
+
+async function onLogin() {
+  const isvalid = await v$.value.$validate();
+  if (!isvalid)
+    return;
+
+  await userStore.loginUser(form.value);
+}
 </script>
 
 <template>

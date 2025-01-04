@@ -12,7 +12,13 @@ export default {
 </script>
 
 <template>
-  <AppHeader />
+  <Suspense>
+    <AppHeader />
+    <template #fallback>
+      <h1>HI I'M LOADING GIVE ME A SEC</h1>
+    </template>
+  </Suspense>
+
   <main>
     <router-view />
   </main>

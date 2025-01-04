@@ -2,7 +2,7 @@ import axiosDJ from '../config/axiosinstance';
 
 const ENDPOINT = 'auth';
 
-export async function loginUser({ username, password }, expiresInMins = 30) {
+export async function authenticateUser({ username, password }, expiresInMins = 30) {
   try {
     const res = await axiosDJ.post(`${ENDPOINT}/login`, {
       username,

@@ -1,32 +1,24 @@
-<script>
-import {useFavoritiesStore} from '../stores/useFavoritiesStore';
-import Productcard from './Product/components/Productcard.vue';
+<script setup>
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
+import Productcard from '../pages/Product/components/Productcard.vue';
+import { useFavoritiesStore } from '../stores/useFavoritiesStore';
 
-export default {
-  components: {
-    Productcard,
-  },
-  setup() {
-    return {favoritiesStore: useFavoritiesStore()};
-  },
+const { favoriteProducts, isLoading } = storeToRefs(useFavoritiesStore());
+const { loadFavorites, resetProducts } = useFavoritiesStore();
 
-  async created() {
-    await this.favoritiesStore.loadFavorites();
-  },
-  unmounted() {
-    this.favoritiesStore.resetProducts();
-  },
+loadFavorites();
 
-};
+onMounted(() => resetProducts());
 </script>
 
 <template>
   <div>
-    <Categories :active="activeCategory" @select="onSelect"/>
+    <Categories :active="activeCategory" @select="onSelect" />
   </div>
-  <progress v-if="favoritiesStore.isLoading"/>
-  <div v-else-if="favoritiesStore.favoriteProducts.length > 0" class="products">
-    <Productcard v-for="prod in favoritiesStore.favoriteProducts" :key="prod.title + prod.id" :product="prod"/>
+  <progress v-if="isLoading" />
+  <div v-else-if="favoriteProducts.length > 0" class="products">
+    <Productcard v-for="prod in favoriteProducts" :key="prod.title + prod.id" :product="prod" />
   </div>
 </template>
 

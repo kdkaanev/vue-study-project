@@ -1,4 +1,38 @@
-<script>
+<script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useCartStore } from '../stores/useCartStore';
+import { useUserStore } from '../stores/useUserStore';
+
+const LINKS = [
+  { name: 'home', label: 'Home' },
+  { name: 'products', label: 'Products' },
+  { name: 'about', label: 'About' },
+  { name: 'contacts', label: 'Contacts' },
+  { name: 'register', label: 'Register' },
+  { name: 'favorites', label: 'Favorites' },
+  { name: 'login', label: 'Login' },
+];
+
+const userStore = useUserStore();
+const cartStore = useCartStore();
+const router = useRouter();
+
+const userName = computed(() => userStore.user?.username ?? '');
+const cartLength = computed(() => cartStore.products.size);
+
+userStore.reAuthUser();
+
+function onCartClick() {
+  router.push({ name: 'cart' });
+}
+
+// onMounted(async () => {
+//   await userStore.reAuthUser();
+// });
+</script>
+
+<!-- <script>
 import { useCartStore } from '../stores/useCartStore';
 import { useUserStore } from '../stores/useUserStore';
 
@@ -42,7 +76,7 @@ export default {
     },
   },
 };
-</script>
+</script> -->
 
 <template>
   <header>
@@ -56,7 +90,7 @@ export default {
         </li>
       </ul>
       <ul>
-        <li v-for="link in links" :key="link.path">
+        <li v-for="link in LINKS" :key="link.path">
           <router-link :to="{ name: link.name }">
             {{ link.label }}
           </router-link>

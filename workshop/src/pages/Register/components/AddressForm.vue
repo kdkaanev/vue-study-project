@@ -1,100 +1,83 @@
-<script>
+<script setup>
 import useVuelidate from '@vuelidate/core';
 import { integer, minLength, required } from '@vuelidate/validators';
+import { computed, ref, watch } from 'vue';
 import DoubleRow from './DoubleRow.vue';
 import FormFieldSet from './FormFieldSet.vue';
 
-export default {
-  components: {
-    FormFieldSet,
-    DoubleRow,
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true,
   },
-  props: {
-    data: {
-      type: Object,
-      required: true,
-    },
-  },
-  emits: ['previous', 'submit'],
-  setup() {
-    return {
-      v$: useVuelidate(),
-    };
-  },
-  data() {
-    return {
-      formData: {
-        address1: '',
-        address2: '',
-        city: '',
-        zip: null,
-        country: '',
-        payment: '',
-        note: '',
+});
+
+const emits = defineEmits(['previous', 'submit']);
+
+const formData = ref({
+  address1: '',
+  address2: '',
+  city: '',
+  zip: null,
+  country: '',
+  payment: '',
+  note: '',
+});
+
+const rules = computed(() => {
+  return {
+    formData: {
+      address1: {
+        required,
+        minLength: minLength(5),
       },
-    };
-  },
-
-  validations() {
-    return {
-      formData: {
-        address1: {
-          required,
-          minLength: minLength(5),
-        },
-        city: {
-          required,
-        },
-        zip: {
-          required,
-          integer,
-
-        },
-        country: {
-          required,
-        },
-        payment: {
-          required,
-        },
+      city: {
+        required,
       },
-    };
-  },
-  watch: {
-    data: {
-      handler(newVal, oldVal) {
-        const areSame = oldVal && (JSON.stringify(Object.entries(newVal).sort()) === JSON.stringify(Object.entries(oldVal).sort()));
-        if (!areSame) {
-          this.initState(newVal);
-        }
+      zip: {
+        required,
+        integer,
+
       },
-
-      deep: true,
-      immediate: true,
+      country: {
+        required,
+      },
+      payment: {
+        required,
+      },
     },
-  },
-  methods: {
-    async onSubmit() {
-      const isValid = await this.v$.$validate();
-      if (isValid) {
-        this.$emit('submit', this.formData);
-      }
-    },
+  };
+});
 
-    initState(dataPropVal) {
-      this.formData = {
+const v$ = useVuelidate(rules, { formData });
 
-        address1: dataPropVal.address1,
-        address2: dataPropVal.address2,
-        city: dataPropVal.address2,
-        zip: dataPropVal.zip,
-        country: dataPropVal.country,
-        payment: dataPropVal.payment,
-        note: dataPropVal.note,
+watch(() => props.data, (newVal, oldVal) => {
+  const areSame = oldVal && (JSON.stringify(Object.entries(newVal).sort()) === JSON.stringify(Object.entries(oldVal).sort()));
+  if (!areSame) {
+    initState(newVal);
+  }
+}, { deep: true, immediate: true });
 
-      };
-    },
-  },
-};
+async function onSubmit() {
+  const isValid = await v$.value.$validate();
+  if (isValid) {
+    emits('submit', formData.value);
+  }
+}
+
+function initState(dataPropVal) {
+  formData.value = {
+
+    address1: dataPropVal.address1,
+    address2: dataPropVal.address2,
+    city: dataPropVal.address2,
+    zip: dataPropVal.zip,
+    country: dataPropVal.country,
+    payment: dataPropVal.payment,
+    note: dataPropVal.note,
+
+  };
+}
 </script>
 
 <template>
